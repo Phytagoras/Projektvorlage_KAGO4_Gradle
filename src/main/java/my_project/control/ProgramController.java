@@ -18,6 +18,8 @@ public class ProgramController {
 
     // Referenzen
     private ViewController viewController;  // diese Referenz soll auf ein Objekt der Klasse viewController zeigen. Über dieses Objekt wird das Fenster gesteuert.
+    private GameServerController gameServerController;
+    private GameController gameController;
 
     /**
      * Konstruktor
@@ -35,9 +37,8 @@ public class ProgramController {
      * Sie erstellt die leeren Datenstrukturen, zu Beginn nur eine Queue
      */
     public void startProgram() {
-        // Erstelle ein Objekt der Klasse Ball und lasse es zeichnen
-        Ball ball1 = new Ball(150,150);
-        viewController.draw(ball1);
+        gameController = new GameController();
+        gameServerController = new GameServerController(gameController);
 
     }
 

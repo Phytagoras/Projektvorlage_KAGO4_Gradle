@@ -1,0 +1,8 @@
+help
+
+joinGame <name>
+
+move
+setSpeed <speedMultiplicator> <playerName>
+spawn <object> <playerName> //portal, banana
+destroy <object> <playerName>
