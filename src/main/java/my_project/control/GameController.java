@@ -83,7 +83,17 @@ public class GameController {
         }
     }
 
-    public void destroyObject(Class<Object> objectClass, int id){
+    public void destroyObject(int objectClassInt, int id){
+        Class objectClass = null;
+        switch (objectClassInt){
+            case 0:
+                objectClass = Banana.class;
+                break;
+            case 1:
+                objectClass = Portal.class;
+                break;
+        }
+
         for(int i=0; i<allObjects.size(); i++) {
             if(allObjects.get(i).getTrack()==id && allObjects.get(i).getClass().equals(objectClass)) {
                 allObjects.remove(i);
