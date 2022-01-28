@@ -4,11 +4,16 @@ import java.util.ArrayList;
 
 import my_project.Config;
 import my_project.model.Player;
+import my_project.model.objects.Banana;
+import my_project.model.objects.Object;
+import my_project.model.objects.Portal;
 
 public class GameController {
 
-    ArrayList<Player> allPlayers;
-    ArrayList<Object> allObjects;
+    private ArrayList<Player> allPlayers;
+    private ArrayList<Object> allObjects;
+
+    public static final int spawnDistance = 200;
 
     public GameController(){
         allPlayers = new ArrayList<>();
@@ -16,6 +21,7 @@ public class GameController {
         Thread thread = new Thread(){
             public void run(){
                 checkEnd();
+                checkCollision();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -34,6 +40,20 @@ public class GameController {
         }
     }
 
+    public void checkCollision(){
+        for(int i=0; i<allPlayers.size(); i++){
+            for(int j=0; j<allObjects.size(); j++){
+                if(allObjects.get(j).getTrack() == i){
+                    if(allPlayers.get(i).getX()+allPlayers.get(i).getWidth()>allObjects.get(j).getX()){
+                        allObjects.get(j).doAction(allPlayers.get(i));
+                        allObjects.remove(j);
+                        j--;
+                    }
+                }
+            }
+        }
+    }
+
     public void restartGame(int i){
 
     }
@@ -45,16 +65,28 @@ public class GameController {
             allPlayers.get(i).setPos(allPlayers.get(i).getX(), Config.WINDOW_HEIGHT*(id+1)/(allPlayers.size()+1));
         }
 
-        //TODO objekt position
+        for(int i=0; i<allObjects.size(); i++){
+            allObjects.get(i).setPos(allObjects.get(i).getX(), Config.WINDOW_HEIGHT*(allObjects.get(i).getTrack()+1)/(allPlayers.size()+1));
+        }
     }
 
     public void spawnObject(int what, int id){
-        /*switch(id) {
+        switch(what) {
             case 0:
-                allObjects.add(new Object1());
+                allObjects.add(new Banana(allPlayers.get(id).getX()+Math.random()*spawnDistance, Config.WINDOW_HEIGHT*(id+1)/(allPlayers.size()+1), id));
+                break;
+            case 1:
+                allObjects.add(new Portal(allPlayers.get(id).getX()+Math.random()*spawnDistance, Config.WINDOW_HEIGHT*(id+1)/(allPlayers.size()+1), id));
                 break;
         }
-         */
+    }
+
+    public void destroyObject(Class<Object> objectClass, int id){
+        for(int i=0; i<allObjects.size(); i++) {
+            if(allObjects.get(i).getTrack()==id && allObjects.get(i).getClass().equals(objectClass)) {
+                allObjects.remove(i);
+            }
+        }
     }
 
     public void movePlayer(int id){

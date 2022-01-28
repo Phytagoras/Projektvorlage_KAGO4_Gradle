@@ -10,6 +10,8 @@ public class Player extends GraphicalObject {
     private String name;
     private double speed;
     private double isMovingTimer;
+    private double stunTimer;
+
     private Color color;
 
     public Player(double x, double y, String name){
@@ -65,9 +67,12 @@ public class Player extends GraphicalObject {
 
     @Override
     public void update(double dt){
-        if(isMovingTimer>=0) {
+        if(isMovingTimer>=0 && stunTimer <= 0) {
             x = x + speed * dt;
             isMovingTimer = isMovingTimer-1*dt;
+        }
+        if(stunTimer > 0){
+            stunTimer -=1*dt;
         }
 
     }
@@ -87,5 +92,9 @@ public class Player extends GraphicalObject {
     public void setPos(double x, double y){
             this.x = x;
             this.y = y;
+    }
+
+    public void stun(){
+        stunTimer = 3;
     }
 }
