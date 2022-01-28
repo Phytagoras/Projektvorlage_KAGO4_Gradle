@@ -2,7 +2,7 @@ help
 
 joinGame <name>
 
-move
+move <playername>
 setSpeed <speedMultiplicator> <playerName>
 spawn <object> <playerName> //portal, banana
 destroy <object> <playerName>
