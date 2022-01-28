@@ -39,7 +39,6 @@ public class ProgramController {
     public void startProgram() {
         gameController = new GameController();
         gameServerController = new GameServerController(gameController);
-
     }
 
     /**

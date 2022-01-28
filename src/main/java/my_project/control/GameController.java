@@ -40,6 +40,12 @@ public class GameController {
         }
     }
 
+    public void restartGame(int winnnerId){
+        for(int i=0; i<allPlayers.size(); i++){
+            allPlayers.get(i).setPos(0, Config.WINDOW_HEIGHT*(i+1)/(allPlayers.size()+1));
+        }
+    }
+
     public void checkCollision(){
         for(int i=0; i<allPlayers.size(); i++){
             for(int j=0; j<allObjects.size(); j++){
@@ -54,15 +60,11 @@ public class GameController {
         }
     }
 
-    public void restartGame(int i){
-
-    }
-
     public void newPlayer(int id, String name) {
         allPlayers.set(id, new Player(30, 0, name));
 
         for(int i=0; i<allPlayers.size(); i++){
-            allPlayers.get(i).setPos(allPlayers.get(i).getX(), Config.WINDOW_HEIGHT*(id+1)/(allPlayers.size()+1));
+            allPlayers.get(i).setPos(allPlayers.get(i).getX(), Config.WINDOW_HEIGHT*(i+1)/(allPlayers.size()+1));
         }
 
         for(int i=0; i<allObjects.size(); i++){
