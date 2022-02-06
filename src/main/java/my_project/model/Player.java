@@ -3,10 +3,18 @@ package my_project.model;
 import KAGO_framework.model.GraphicalObject;
 import KAGO_framework.view.DrawTool;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Player extends GraphicalObject {
 
+    private static final int minSpeed = 1;
+    private static final int maxSpeed = 100;
+
+    private int id;
     private String name;
     private double speed;
     private double isMovingTimer;
@@ -14,11 +22,14 @@ public class Player extends GraphicalObject {
 
     private Color color;
 
-    public Player(double x, double y, String name){
+    public Player(int id, double x, double y, String name){
+        this.id = id;
         this.x = x;
         this.y = y;
 
-        width = 20;
+        speed = 25;
+        width = 30;
+        height = 30;
 
         this.name = name;
         switch ((int)(Math.random()*10)){
@@ -59,30 +70,48 @@ public class Player extends GraphicalObject {
     @Override
     public void draw(DrawTool drawTool) {
         drawTool.setCurrentColor(color);
-        drawTool.drawFilledRectangle(x,y,width, width);
-        drawTool.setCurrentColor(Color.BLACK);
-        drawTool.drawRectangle(x,y,width*2/3);
-        drawTool.drawRectangle(x,y,width*1/3);
+        drawTool.drawText(x, y, name);
+
+        drawTool.setCurrentColor(Color.WHITE);
+        BufferedImage bufferedImage = null;
+        try {
+            Image img = ImageIO.read(new File("src/main/resources/graphic/spaceship.png")).getScaledInstance((int)width, (int)height, java.awt.Image.SCALE_SMOOTH);
+
+            // Create a buffered image with transparency
+            bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+            // Draw the image on to the buffered image
+            Graphics2D bGr = bufferedImage.createGraphics();
+            bGr.drawImage(img, 0, 0, null);
+            bGr.dispose();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        drawTool.drawImage(bufferedImage, x, y);
     }
 
     @Override
     public void update(double dt){
         if(isMovingTimer>=0 && stunTimer <= 0) {
             x = x + speed * dt;
-            isMovingTimer = isMovingTimer-1*dt;
         }
         if(stunTimer > 0){
-            stunTimer -=1*dt;
+            stunTimer -= 1*dt;
         }
-
+        isMovingTimer = isMovingTimer-1*dt;
     }
 
     public void move(){
-        isMovingTimer = 1;
+        isMovingTimer = 2;
     }
 
     public void changeSpeed(double i){
         speed = speed*i;
+        if(speed > maxSpeed){
+            speed = maxSpeed;
+        }else if(speed <minSpeed){
+            speed = minSpeed;
+        }
     }
 
     public void setName(String name){
@@ -96,5 +125,25 @@ public class Player extends GraphicalObject {
 
     public void stun(){
         stunTimer = 3;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }

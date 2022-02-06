@@ -2,30 +2,40 @@ package my_project.control;
 
 import java.util.ArrayList;
 
+import KAGO_framework.control.ViewController;
 import my_project.Config;
 import my_project.model.Player;
+import my_project.model.WinnerText;
 import my_project.model.objects.Banana;
 import my_project.model.objects.Object;
 import my_project.model.objects.Portal;
 
 public class GameController {
 
+    private ViewController viewController;
+
     private ArrayList<Player> allPlayers;
     private ArrayList<Object> allObjects;
 
     public static final int spawnDistance = 200;
+    public static final int spawnPoint = 0;
 
-    public GameController(){
+    public GameController(ViewController viewController){
+        this.viewController = viewController;
+
         allPlayers = new ArrayList<>();
+        allObjects = new ArrayList<>();
 
         Thread thread = new Thread(){
             public void run(){
-                checkEnd();
-                checkCollision();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                while (true) {
+                    checkEnd();
+                    checkCollision();
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -41,17 +51,34 @@ public class GameController {
     }
 
     public void restartGame(int winnnerId){
+        WinnerText winnerText = null;
+
+        for(int i = 0; i<allPlayers.size(); i++) {
+            if(allPlayers.get(i).getId() == winnnerId) {
+                winnerText = new WinnerText(allPlayers.get(i).getName());
+                viewController.draw(winnerText);
+            }
+        }
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        viewController.removeDrawable(winnerText);
         for(int i=0; i<allPlayers.size(); i++){
-            allPlayers.get(i).setPos(0, Config.WINDOW_HEIGHT*(i+1)/(allPlayers.size()+1));
+            allPlayers.get(i).setPos(spawnPoint, (double) Config.WINDOW_HEIGHT*(i+1)/(allPlayers.size()+1));
         }
     }
 
     public void checkCollision(){
         for(int i=0; i<allPlayers.size(); i++){
             for(int j=0; j<allObjects.size(); j++){
-                if(allObjects.get(j).getTrack() == i){
-                    if(allPlayers.get(i).getX()+allPlayers.get(i).getWidth()>allObjects.get(j).getX()){
+                if(allObjects.get(j).getTrack() == allPlayers.get(i).getId()){
+                    if(allPlayers.get(i).getX()+allPlayers.get(i).getWidth()>=allObjects.get(j).getX()){
                         allObjects.get(j).doAction(allPlayers.get(i));
+                        viewController.removeDrawable(allObjects.get(j));
                         allObjects.remove(j);
                         j--;
                     }
@@ -61,25 +88,63 @@ public class GameController {
     }
 
     public void newPlayer(int id, String name) {
-        allPlayers.set(id, new Player(30, 0, name));
-
-        for(int i=0; i<allPlayers.size(); i++){
-            allPlayers.get(i).setPos(allPlayers.get(i).getX(), Config.WINDOW_HEIGHT*(i+1)/(allPlayers.size()+1));
+        boolean test = false;
+        for(int i=0; i<allPlayers.size(); i++) {
+            if(allPlayers.get(i).getId() == id) {
+                test = true;
+            }
+        }
+        if(!test){
+            Player player = new Player(id,spawnPoint, 0, name);
+            viewController.draw(player);
+            allPlayers.add(player);
         }
 
-        for(int i=0; i<allObjects.size(); i++){
-            allObjects.get(i).setPos(allObjects.get(i).getX(), Config.WINDOW_HEIGHT*(allObjects.get(i).getTrack()+1)/(allPlayers.size()+1));
+        repos();
+
+        System.out.println("Player count: "+allPlayers.size());
+    }
+
+    public void removePlayer(int id){
+        for(int i=0; i<allPlayers.size(); i++) {
+            if(allPlayers.get(i).getId() == id) {
+                viewController.removeDrawable(allPlayers.get(i));
+                allPlayers.remove(i);
+                i--;
+            }
+        }
+
+        repos();
+    }
+
+    private void repos(){
+        for(int i=0; i<allPlayers.size(); i++){
+            allPlayers.get(i).setPos(allPlayers.get(i).getX(), (double) Config.WINDOW_HEIGHT*(i+1)/(allPlayers.size()+1));
+
+            for(int j=0; j<allObjects.size(); j++){
+                if(allObjects.get(j).getTrack()==allPlayers.get(i).getId()) {
+                    allObjects.get(j).setPos(allObjects.get(j).getX(), (double) Config.WINDOW_HEIGHT * (i+1) / (allPlayers.size() + 1));
+                }
+            }
         }
     }
 
     public void spawnObject(int what, int id){
-        switch(what) {
-            case 0:
-                allObjects.add(new Banana(allPlayers.get(id).getX()+Math.random()*spawnDistance, Config.WINDOW_HEIGHT*(id+1)/(allPlayers.size()+1), id));
-                break;
-            case 1:
-                allObjects.add(new Portal(allPlayers.get(id).getX()+Math.random()*spawnDistance, Config.WINDOW_HEIGHT*(id+1)/(allPlayers.size()+1), id));
-                break;
+        for(int i=0; i<allPlayers.size(); i++) {
+            if(allPlayers.get(i).getId() == id) {
+                switch (what) {
+                    case 0:
+                        Banana banana = new Banana(allPlayers.get(i).getX() + Math.random() * spawnDistance+spawnDistance, (double) Config.WINDOW_HEIGHT * (i + 1) / (allPlayers.size() + 1), id);
+                        viewController.draw(banana);
+                        allObjects.add(banana);
+                        break;
+                    case 1:
+                        Portal portal = new Portal(allPlayers.get(i).getX() + Math.random() * spawnDistance+spawnDistance, (double) Config.WINDOW_HEIGHT * (i + 1) / (allPlayers.size() + 1), id);
+                        viewController.draw(portal);
+                        allObjects.add(portal);
+                        break;
+                }
+            }
         }
     }
 
@@ -94,20 +159,28 @@ public class GameController {
                 break;
         }
 
-        for(int i=0; i<allObjects.size(); i++) {
-            if(allObjects.get(i).getTrack()==id && allObjects.get(i).getClass().equals(objectClass)) {
-                allObjects.remove(i);
+        for (int j = 0; j < allObjects.size(); j++) {
+            if (allObjects.get(j).getTrack() == id && allObjects.get(j).getClass().equals(objectClass)) {
+                viewController.removeDrawable(allObjects.get(j));
+                allObjects.remove(j);
+                j--;
             }
         }
     }
 
     public void movePlayer(int id){
-        allPlayers.get(id).move();
+        for(int i=0; i<allPlayers.size(); i++) {
+            if(allPlayers.get(i).getId() == id) {
+                allPlayers.get(i).move();
+            }
+        }
     }
 
     public void changeSpeed(int id, double multiplicator){
-        allPlayers.get(id).changeSpeed(multiplicator);
+        for(int i=0; i<allPlayers.size(); i++) {
+            if (allPlayers.get(i).getId() == id) {
+                allPlayers.get(i).changeSpeed(multiplicator);
+            }
+        }
     }
-
-
 }

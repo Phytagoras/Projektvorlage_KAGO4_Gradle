@@ -37,7 +37,7 @@ public class ProgramController {
      * Sie erstellt die leeren Datenstrukturen, zu Beginn nur eine Queue
      */
     public void startProgram() {
-        gameController = new GameController();
+        gameController = new GameController(viewController);
         gameServerController = new GameServerController(gameController);
     }
 

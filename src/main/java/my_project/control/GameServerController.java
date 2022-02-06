@@ -57,7 +57,6 @@ public class GameServerController extends Server{
                     currentConnectedEntity.setName(commandFragments[1]);
                     gameController.newPlayer(currentConnectedEntity.getId(), currentConnectedEntity.getName());
                     return true;
-
                 }
             }
         }else{
@@ -153,5 +152,12 @@ public class GameServerController extends Server{
     @Override
     public void processClosingConnection(String pClientIP, int pClientPort){
         this.send(pClientIP, pClientPort, "Bye");
+        for (int i=0; i<players.size(); i++){
+            if(players.get(i).getIp().equals(pClientIP)){
+                gameController.removePlayer(players.get(i).getId());
+                players.remove(i);
+                i--;
+            }
+        }
     }
 }
