@@ -91,7 +91,7 @@ public class GameServerController extends Server{
                     //soll der Multiplier noch begrenzt werden?
                     for(ConnectedEntity connectedEntity : players){
                         if(connectedEntity.getName().equals(commandFragments[2])){  //wird fuer jeden Player mit dem Namen ausgefuehrt
-                            gameController.changeSpeed(currentConnectedEntity.getId(), multiplier);
+                            gameController.changeSpeed(connectedEntity.getId(), multiplier);
                             found = true;
                         }
                     }
@@ -113,7 +113,7 @@ public class GameServerController extends Server{
                     }
                     for(ConnectedEntity connectedEntity : players){
                         if(connectedEntity.getName().equals(commandFragments[2])){  //wird fuer jeden Player mit dem Namen ausgefuehrt
-                            gameController.spawnObject(obj, currentConnectedEntity.getId());
+                            gameController.spawnObject(obj, connectedEntity.getId());
                             found = true;
                         }
                     }
@@ -135,7 +135,7 @@ public class GameServerController extends Server{
                     }
                     for(ConnectedEntity connectedEntity : players){
                         if(connectedEntity.getName().equals(commandFragments[2])){  //wird fuer jeden Player mit dem Namen ausgefuehrt
-                            gameController.destroyObject(obj, currentConnectedEntity.getId());
+                            gameController.destroyObject(obj, connectedEntity.getId());
                             found = true;
                         }
                     }
