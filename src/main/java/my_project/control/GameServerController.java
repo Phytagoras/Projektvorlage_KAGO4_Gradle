@@ -24,6 +24,7 @@ public class GameServerController extends Server{
 
     @Override
     public void processMessage(String pClientIP, int pClientPort, String pMessage){
+        System.out.println(pMessage);
         ConnectedEntity currentConnectedEntity = null;
         for(int i = 0; i < players.size(); i++){
             if(players.get(i).getIp().equals(pClientIP)){
@@ -83,6 +84,9 @@ public class GameServerController extends Server{
                         send(pClientIP, pClientPort, "Spieler existiert nicht!");
                         return false;
                     }
+                }
+                else{
+                    send(pClientIP, pClientPort, "Command ist falsch!");
                 }
             }else if(commandFragments.length == 3){
                 if(commandFragments[0].equalsIgnoreCase("setSpeed") && !commandFragments[1].isEmpty() && !commandFragments[2].isEmpty()){
