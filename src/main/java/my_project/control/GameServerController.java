@@ -41,11 +41,12 @@ public class GameServerController extends Server{
             }
         }else if(commandFragments[0].equalsIgnoreCase("help")){
             switch(currentConnectedEntity.getHelpCounter()){                              //Help Anweisungen fehlen noch
+                case(0) -> send(pClientIP, pClientPort, "First thing to do is, to 'joinGame'...you also need a Name");
                 default -> send(pClientIP, pClientPort, "HIER HILFE...NIMM");
             }
 
         }else{
-            send(pClientIP, pClientPort, "Du kannst jederzeit nach Hilfe fragen!");
+            send(pClientIP, pClientPort, "Du kannst jederzeit nach Hilfe (oder Englisch 'help') fragen!");
         }
     }
 
