@@ -42,6 +42,12 @@ public class GameServerController extends Server{
         }else if(commandFragments[0].equalsIgnoreCase("help")){
             switch(currentConnectedEntity.getHelpCounter()){                              //Help Anweisungen fehlen noch
                 case(0) -> send(pClientIP, pClientPort, "First thing to do is, to 'joinGame'...you also need a Name");
+                case(1) -> send(pClientIP, pClientPort, "after a command there must be a name of the player selected");
+                case(2) -> send(pClientIP, pClientPort, "Then you need to 'move'");
+                case(3) -> send(pClientIP, pClientPort, "You can 'spawn' something... You just need to say what you wanna spawn and to whom");
+                case(4) -> send(pClientIP, pClientPort, "you can spawn a 'banana' and a 'portal'");
+                case(5) -> send(pClientIP, pClientPort, "You can 'destroy' something... You just need to say what you wanna spawn and to whom");
+                case(6) -> send(pClientIP, pClientPort, "You can change the movement speed :)");
                 default -> send(pClientIP, pClientPort, "HIER HILFE...NIMM");
             }
             currentConnectedEntity.setHelpCounter(currentConnectedEntity.getHelpCounter() + 1);
