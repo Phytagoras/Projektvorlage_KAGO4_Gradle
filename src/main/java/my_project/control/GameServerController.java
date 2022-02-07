@@ -44,7 +44,7 @@ public class GameServerController extends Server{
                 case(0) -> send(pClientIP, pClientPort, "First thing to do is, to 'joinGame'...you also need a Name");
                 default -> send(pClientIP, pClientPort, "HIER HILFE...NIMM");
             }
-            currentConnectedEntity.setHelpCounter(currentConnectedEntity.getHelpCounter()++);
+            currentConnectedEntity.setHelpCounter(currentConnectedEntity.getHelpCounter() + 1);
 
         }else{
             send(pClientIP, pClientPort, "Du kannst jederzeit nach Hilfe (oder Englisch 'help') fragen!");
